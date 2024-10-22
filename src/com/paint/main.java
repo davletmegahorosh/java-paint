@@ -31,18 +31,37 @@ public class main {
                         if (files != null) {
                             StringBuilder fileList = new StringBuilder("Список файлов и папок:\n");
                             for (File file : files) {
-                                fileList.append(file.getName()).append("\n");
+                                String fileName = file.getName();
+                                if (isImageFile(fileName)) {
+                                    // Добавляем информацию для изображений
+                                    fileList.append(fileName).append(" (Изображение)\n");
+                                } else {
+                                    fileList.append(fileName).append("\n");
+                                }
                             }
                             JOptionPane.showMessageDialog(null, fileList.toString());
                         } else {
                             JOptionPane.showMessageDialog(null, "Папка пуста.");
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Выбран файл: " + selectedFile.getName());
+                        String fileName = selectedFile.getName();
+                        if (isImageFile(fileName)) {
+                            JOptionPane.showMessageDialog(null, fileName + " (Изображение)");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Выбран файл: " + fileName);
+                        }
                     }
                 }
             }
         });
+    }
+
+    // Метод для проверки, является ли файл изображением
+    private boolean isImageFile(String fileName) {
+        String fileNameLower = fileName.toLowerCase();
+        return fileNameLower.endsWith(".jpg") || fileNameLower.endsWith(".jpeg") ||
+                fileNameLower.endsWith(".png") || fileNameLower.endsWith(".gif") ||
+                fileNameLower.endsWith(".svg");
     }
 
     public static void main(String[] args) {
