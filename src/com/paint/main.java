@@ -59,7 +59,7 @@ public class main {
                     } else {
                         String fileName = selectedFile.getName();
                         if (isImageFile(fileName)) {
-                            JOptionPane.showMessageDialog(null, fileName + " (Изображение)");
+                            showImageFrame(selectedFile);
                         } else {
                             JOptionPane.showMessageDialog(null, "Выбран файл: " + fileName);
                         }
@@ -76,6 +76,35 @@ public class main {
                 fileNameLower.endsWith(".svg");
     }
 
+    private void showImageFrame(File imageFile) {
+        JFrame imageFrame = new JFrame("Просмотр изображения");
+        imageFrame.setSize(1280, 832);
+        imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        ImageIcon imageIcon = new ImageIcon(imageFile.getAbsolutePath());
+        Image originalImage = imageIcon.getImage();
+
+        // Сохранение пропорций изображения
+        int width = originalImage.getWidth(null);
+        int height = originalImage.getHeight(null);
+        float aspectRatio = (float) width / height;
+
+        int displayWidth = 1280;
+        int displayHeight = 832;
+
+        if (displayWidth / aspectRatio < displayHeight) {
+            displayHeight = (int) (displayWidth / aspectRatio);
+        } else {
+            displayWidth = (int) (displayHeight * aspectRatio);
+        }
+
+        Image scaledImage = originalImage.getScaledInstance(displayWidth, displayHeight, Image.SCALE_SMOOTH);
+        JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+
+        imageFrame.add(imageLabel);
+        imageFrame.setVisible(true);
+    }
+
     public JFrame getjFrame() {
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,6 +117,4 @@ public class main {
     public static void main(String[] args) {
         new main();
     }
-
-
 }
