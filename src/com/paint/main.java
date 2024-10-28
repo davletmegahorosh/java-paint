@@ -9,60 +9,46 @@ import java.io.File;
 public class main {
     private JButton button1;
     private JPanel panel1;
+    private JLabel imageLabel;
     private JFrame jFrame;
 
     public main() {
-        panel1 = new JPanel(new GridBagLayout());
+        // Создаем главную панель с компоновкой BorderLayout
+        panel1 = new JPanel(new BorderLayout());
+
+        // Кнопка "Выбрать файл" будет внизу
         button1 = new JButton("Выбрать файл");
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(button1);
+        panel1.add(buttonPanel, BorderLayout.SOUTH);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.NONE;
+        // Место для изображения (пустое при запуске)
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panel1.add(imageLabel, BorderLayout.CENTER);
 
-        panel1.add(button1, gbc);
-
-        this.jFrame = getjFrame();
+        // Настройка основного окна
+        this.jFrame = getJFrame();
         this.jFrame.setContentPane(panel1);
         this.jFrame.setVisible(true);
 
+        // Обработка события нажатия на кнопку
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
                 int result = fileChooser.showOpenDialog(null);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
+                    String fileName = selectedFile.getName();
 
-                    if (selectedFile.isDirectory()) {
-                        File[] files = selectedFile.listFiles();
-                        if (files != null) {
-                            StringBuilder fileList = new StringBuilder("Список файлов и папок:\n");
-                            for (File file : files) {
-                                String fileName = file.getName();
-                                if (isImageFile(fileName)) {
-                                    fileList.append(fileName).append(" (Изображение)\n");
-                                } else {
-                                    fileList.append(fileName).append("\n");
-                                }
-                            }
-                            JOptionPane.showMessageDialog(null, fileList.toString());
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Папка пуста.");
-                        }
+                    if (isImageFile(fileName)) {
+                        showImageInMainFrame(selectedFile);
                     } else {
-                        String fileName = selectedFile.getName();
-                        if (isImageFile(fileName)) {
-                            showImageFrame(selectedFile);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Выбран файл: " + fileName);
-                        }
+                        JOptionPane.showMessageDialog(null, "Выбран файл не является изображением: " + fileName);
                     }
                 }
             }
@@ -76,11 +62,7 @@ public class main {
                 fileNameLower.endsWith(".svg");
     }
 
-    private void showImageFrame(File imageFile) {
-        JFrame imageFrame = new JFrame("Просмотр изображения");
-        imageFrame.setSize(1280, 832);
-        imageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+    private void showImageInMainFrame(File imageFile) {
         ImageIcon imageIcon = new ImageIcon(imageFile.getAbsolutePath());
         Image originalImage = imageIcon.getImage();
 
@@ -89,8 +71,8 @@ public class main {
         int height = originalImage.getHeight(null);
         float aspectRatio = (float) width / height;
 
-        int displayWidth = 1280;
-        int displayHeight = 832;
+        int displayWidth = panel1.getWidth();
+        int displayHeight = panel1.getHeight() - button1.getHeight();
 
         if (displayWidth / aspectRatio < displayHeight) {
             displayHeight = (int) (displayWidth / aspectRatio);
@@ -99,18 +81,15 @@ public class main {
         }
 
         Image scaledImage = originalImage.getScaledInstance(displayWidth, displayHeight, Image.SCALE_SMOOTH);
-        JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
-
-        imageFrame.add(imageLabel);
-        imageFrame.setVisible(true);
+        imageLabel.setIcon(new ImageIcon(scaledImage));
+        jFrame.revalidate(); // Обновляем окно после изменения
     }
 
-    public JFrame getjFrame() {
+    private JFrame getJFrame() {
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setBounds(450, 350, 500, 300);
+        jFrame.setBounds(450, 350, 800, 600);
         jFrame.setTitle("Megapushka");
-        jFrame.setVisible(true);
         return jFrame;
     }
 
