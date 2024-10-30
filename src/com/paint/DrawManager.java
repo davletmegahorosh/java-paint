@@ -2,15 +2,22 @@ package com.paint;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 public class DrawManager {
-    private Color currentColor = Color.BLACK;
     private BufferedImage bufferedImage;
     private JLabel imageLabel;
-    private int lastX = -1, lastY = -1;
+    private Color currentColor = Color.BLACK;
+    private int lastX = -1;
+    private int lastY = -1;
+
+    public void setImageLabel(JLabel imageLabel) {
+        this.imageLabel = imageLabel;
+    }
+
+    public void setCurrentColor(Color color) {
+        this.currentColor = color;
+    }
 
     public static ImageIcon createColorIcon(Color color) {
         BufferedImage image = new BufferedImage(30, 30, BufferedImage.TYPE_INT_ARGB);
@@ -21,54 +28,68 @@ public class DrawManager {
         return new ImageIcon(image);
     }
 
-    public void setCurrentColor(Color color) {
-        currentColor = color;
+    public void setBufferedImage(BufferedImage bufferedImage) {
+        this.bufferedImage = bufferedImage;
+        updateImageDisplay();
     }
 
-    public void setImageLabel(JLabel label) {
-        this.imageLabel = label;
-        addDrawingListener();
-    }
+    public void draw(int x, int y) {
+        if (bufferedImage != null && imageLabel != null) {
+            // Вычисляем масштабирование и смещение для изображения
+            double scaleX = (double) imageLabel.getWidth() / bufferedImage.getWidth();
+            double scaleY = (double) imageLabel.getHeight() / bufferedImage.getHeight();
+            double scaleFactor = Math.min(scaleX, scaleY);
 
-    public void loadImage(File file, JLabel label) {
-        ImageLoader.loadImage(file, label);
-        this.imageLabel = label;
-    }
+            int displayedWidth = (int) (bufferedImage.getWidth() * scaleFactor);
+            int displayedHeight = (int) (bufferedImage.getHeight() * scaleFactor);
 
-    private void addDrawingListener() {
-        imageLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                lastX = -1;
-                lastY = -1;
+            int offsetX = (imageLabel.getWidth() - displayedWidth) / 2;
+            int offsetY = (imageLabel.getHeight() - displayedHeight) / 2;
+
+            // Корректируем координаты мыши для отображаемого изображения
+            int adjustedX = (int) ((x - offsetX) / scaleFactor);
+            int adjustedY = (int) ((y - offsetY) / scaleFactor);
+
+            if (adjustedX >= 0 && adjustedX < bufferedImage.getWidth() &&
+                    adjustedY >= 0 && adjustedY < bufferedImage.getHeight()) {
+
+                Graphics2D g2d = bufferedImage.createGraphics();
+                g2d.setColor(currentColor);
+                g2d.setStroke(new BasicStroke(5));
+
+                if (lastX != -1 && lastY != -1) {
+                    g2d.drawLine(lastX, lastY, adjustedX, adjustedY);
+                } else {
+                    g2d.fillOval(adjustedX - 2, adjustedY - 2, 5, 5);
+                }
+
+                g2d.dispose();
+                lastX = adjustedX;
+                lastY = adjustedY;
+
+                // Обновляем ImageIcon для корректного отображения изменений
+                updateImageDisplay();
             }
-        });
-
-        imageLabel.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                draw(e.getX(), e.getY());
-            }
-        });
+        }
     }
 
-    private void draw(int x, int y) {
-        if (bufferedImage == null) {
-            bufferedImage = new BufferedImage(imageLabel.getWidth(), imageLabel.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            imageLabel.setIcon(new ImageIcon(bufferedImage));
-        }
-        Graphics2D g2d = bufferedImage.createGraphics();
-        g2d.setColor(currentColor);
-        g2d.setStroke(new BasicStroke(5));
+    public void resetLastPoint() {
+        lastX = -1;
+        lastY = -1;
+    }
 
-        if (lastX != -1 && lastY != -1) {
-            g2d.drawLine(lastX, lastY, x, y);
-        } else {
-            g2d.fillOval(x - 2, y - 2, 5, 5);
+    private void updateImageDisplay() {
+        // Масштабируем и отображаем измененное изображение
+        if (bufferedImage != null && imageLabel != null) {
+            double scaleX = (double) imageLabel.getWidth() / bufferedImage.getWidth();
+            double scaleY = (double) imageLabel.getHeight() / bufferedImage.getHeight();
+            double scaleFactor = Math.min(scaleX, scaleY);
+
+            int displayedWidth = (int) (bufferedImage.getWidth() * scaleFactor);
+            int displayedHeight = (int) (bufferedImage.getHeight() * scaleFactor);
+
+            Image scaledImage = bufferedImage.getScaledInstance(displayedWidth, displayedHeight, Image.SCALE_SMOOTH);
+            imageLabel.setIcon(new ImageIcon(scaledImage));
         }
-        g2d.dispose();
-        imageLabel.repaint();
-        lastX = x;
-        lastY = y;
     }
 }

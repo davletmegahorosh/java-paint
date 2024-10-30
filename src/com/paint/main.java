@@ -1,5 +1,4 @@
 package com.paint;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -20,7 +19,6 @@ public class main {
     private Color currentColor = Color.BLACK;
 
     private ImageIcon createColorIcon(Color color) {
-        // Создаем изображение 30x30 пикселей с заданным цветом
         BufferedImage image = new BufferedImage(30, 30, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
         g2d.setColor(color);

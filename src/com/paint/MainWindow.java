@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class MainWindow {
@@ -50,7 +51,12 @@ public class MainWindow {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     if (ImageLoader.isImageFile(selectedFile.getName())) {
-                        drawManager.loadImage(selectedFile, imageLabel);
+                        BufferedImage image = ImageLoader.loadImage(selectedFile);
+                        drawManager.setBufferedImage(image);
+
+                        // Масштабируем изображение с учетом пустого пространства
+                        ImageIcon scaledImageIcon = ImageLoader.scaleImage(image, imageLabel.getWidth(), imageLabel.getHeight());
+                        imageLabel.setIcon(scaledImageIcon);
                     } else {
                         JOptionPane.showMessageDialog(null, "Выбран файл не является изображением: " + selectedFile.getName());
                     }
@@ -58,15 +64,29 @@ public class MainWindow {
             }
         });
 
-        // Создание окна и инициализация DrawManager
         jFrame = new JFrame("Megapushka");
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setBounds(450, 350, 800, 600);
+        jFrame.setSize(800, 600);
+        jFrame.setLocationRelativeTo(null);
         jFrame.setContentPane(panel1);
         jFrame.setVisible(true);
 
         drawManager = new DrawManager();
         drawManager.setImageLabel(imageLabel);
+
+        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent e) {
+                drawManager.resetLastPoint();
+            }
+        });
+
+        imageLabel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                drawManager.draw(e.getX(), e.getY());
+            }
+        });
     }
 
     public static void main(String[] args) {
