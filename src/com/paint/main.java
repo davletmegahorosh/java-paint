@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class main {
+
     private JButton button1;
     private JPanel panel1;
     private JLabel imageLabel;
