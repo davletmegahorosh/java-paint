@@ -11,6 +11,7 @@ public class main {
     private JPanel panel1;
     private JLabel imageLabel;
     private JFrame jFrame;
+    private JButton saveButton;
 
     private int lastX = -1;
     private int lastY = -1;
@@ -32,8 +33,10 @@ public class main {
         panel1 = new JPanel(new BorderLayout());
 
         button1 = new JButton("Выбрать файл");
+        saveButton = new JButton("Сохранить файл");
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(button1);
+        buttonPanel.add(saveButton);
 
         JPanel colorPanel = new JPanel();
         colorPanel.setLayout(new FlowLayout());
@@ -86,6 +89,14 @@ public class main {
                         JOptionPane.showMessageDialog(null, "Выбран файл не является изображением: " + fileName);
                     }
                 }
+            }
+        });
+
+        saveButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                // Вызываем метод для сохранения изображения
+                SaveImage.save(bufferedImage, jFrame );
             }
         });
 
