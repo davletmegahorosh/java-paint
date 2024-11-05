@@ -8,6 +8,7 @@ public class DrawManager {
     private BufferedImage bufferedImage;
     private JLabel imageLabel;
     private Color currentColor = Color.BLACK;
+    private int strokeSize = 5;  // Default stroke size
     private int lastX = -1;
     private int lastY = -1;
 
@@ -17,6 +18,10 @@ public class DrawManager {
 
     public void setCurrentColor(Color color) {
         this.currentColor = color;
+    }
+
+    public void setStrokeSize(int size) {
+        this.strokeSize = size;
     }
 
     public static ImageIcon createColorIcon(Color color) {
@@ -33,9 +38,12 @@ public class DrawManager {
         updateImageDisplay();
     }
 
+    public BufferedImage getBufferedImage() {
+        return bufferedImage;
+    }
+
     public void draw(int x, int y) {
         if (bufferedImage != null && imageLabel != null) {
-            // Вычисляем масштабирование и смещение для изображения
             double scaleX = (double) imageLabel.getWidth() / bufferedImage.getWidth();
             double scaleY = (double) imageLabel.getHeight() / bufferedImage.getHeight();
             double scaleFactor = Math.min(scaleX, scaleY);
@@ -46,7 +54,6 @@ public class DrawManager {
             int offsetX = (imageLabel.getWidth() - displayedWidth) / 2;
             int offsetY = (imageLabel.getHeight() - displayedHeight) / 2;
 
-            // Корректируем координаты мыши для отображаемого изображения
             int adjustedX = (int) ((x - offsetX) / scaleFactor);
             int adjustedY = (int) ((y - offsetY) / scaleFactor);
 
@@ -55,19 +62,18 @@ public class DrawManager {
 
                 Graphics2D g2d = bufferedImage.createGraphics();
                 g2d.setColor(currentColor);
-                g2d.setStroke(new BasicStroke(5));
+                g2d.setStroke(new BasicStroke(strokeSize));  // Set stroke size based on slider
 
                 if (lastX != -1 && lastY != -1) {
                     g2d.drawLine(lastX, lastY, adjustedX, adjustedY);
                 } else {
-                    g2d.fillOval(adjustedX - 2, adjustedY - 2, 5, 5);
+                    g2d.fillOval(adjustedX - strokeSize / 2, adjustedY - strokeSize / 2, strokeSize, strokeSize);
                 }
 
                 g2d.dispose();
                 lastX = adjustedX;
                 lastY = adjustedY;
 
-                // Обновляем ImageIcon для корректного отображения изменений
                 updateImageDisplay();
             }
         }
@@ -79,7 +85,6 @@ public class DrawManager {
     }
 
     private void updateImageDisplay() {
-        // Масштабируем и отображаем измененное изображение
         if (bufferedImage != null && imageLabel != null) {
             double scaleX = (double) imageLabel.getWidth() / bufferedImage.getWidth();
             double scaleY = (double) imageLabel.getHeight() / bufferedImage.getHeight();

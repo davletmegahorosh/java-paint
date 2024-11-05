@@ -37,7 +37,7 @@ public class ImageLoader {
         // Создаем новое изображение с фоном, чтобы оно занимало полный размер JLabel
         BufferedImage scaledImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = scaledImage.createGraphics();
-        g2d.setColor(Color.WHITE);  // Устанавливаем белый фон
+        g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, targetWidth, targetHeight);
 
         // Центрируем изображение

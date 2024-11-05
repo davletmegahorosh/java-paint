@@ -11,15 +11,19 @@ public class MainWindow {
     private JFrame jFrame;
     private JPanel panel1;
     private JButton fileButton;
+    private JButton saveButton;  // Button to save the drawn image
     private JPanel colorPanel;
     private JLabel imageLabel;
+    private JSlider sizeSlider;  // Slider to control line thickness
     private DrawManager drawManager;
 
     public MainWindow() {
         panel1 = new JPanel(new BorderLayout());
         fileButton = new JButton("Выбрать файл");
+        saveButton = new JButton("Сохранить");  // Save button
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(fileButton);
+        buttonPanel.add(saveButton);  // Add the save button to the panel
 
         colorPanel = new JPanel();
         colorPanel.setLayout(new FlowLayout());
@@ -28,13 +32,21 @@ public class MainWindow {
         for (Color color : colors) {
             JButton colorButton = new JButton();
             colorButton.setBackground(color);
-            colorButton.setPreferredSize(new Dimension(30, 30));
+            colorButton.setPreferredSize(new Dimension(20, 20));
             colorButton.setIcon(DrawManager.createColorIcon(color));
             colorButton.addActionListener(e -> drawManager.setCurrentColor(color));
             colorPanel.add(colorButton);
         }
 
+
+        sizeSlider = new JSlider(1, 20, 5);
+        sizeSlider.setMajorTickSpacing(5);
+        sizeSlider.setPaintTicks(true);
+        sizeSlider.setPaintLabels(true);
+        sizeSlider.addChangeListener(e -> drawManager.setStrokeSize(sizeSlider.getValue()));  // Update stroke size
+
         buttonPanel.add(colorPanel);
+        buttonPanel.add(sizeSlider);
         panel1.add(buttonPanel, BorderLayout.SOUTH);
 
         imageLabel = new JLabel();
@@ -54,7 +66,6 @@ public class MainWindow {
                         BufferedImage image = ImageLoader.loadImage(selectedFile);
                         drawManager.setBufferedImage(image);
 
-                        // Масштабируем изображение с учетом пустого пространства
                         ImageIcon scaledImageIcon = ImageLoader.scaleImage(image, imageLabel.getWidth(), imageLabel.getHeight());
                         imageLabel.setIcon(scaledImageIcon);
                     } else {
@@ -63,6 +74,8 @@ public class MainWindow {
                 }
             }
         });
+
+        saveButton.addActionListener(e -> SaveImage.save(drawManager.getBufferedImage(), jFrame));
 
         jFrame = new JFrame("Megapushka");
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,6 +86,7 @@ public class MainWindow {
 
         drawManager = new DrawManager();
         drawManager.setImageLabel(imageLabel);
+        drawManager.setStrokeSize(sizeSlider.getValue());
 
         imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
