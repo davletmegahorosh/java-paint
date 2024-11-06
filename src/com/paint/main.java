@@ -86,12 +86,14 @@ class ImagePanel extends JLabel {
     public ImagePanel() {
         setPreferredSize(new Dimension(800, 600));
         setHorizontalAlignment(SwingConstants.CENTER);
+
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 draw(e.getX(), e.getY());
             }
         });
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
