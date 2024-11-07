@@ -27,6 +27,7 @@ public class PaintApp {
         setupLayout(); // Настройка компоновки панелей
     }
 
+
     // Настройка основного окна (JFrame)
     private void setupMainFrame() {
         jFrame = new JFrame("Advanced Paint App"); // Создаем окно с заголовком
@@ -38,30 +39,35 @@ public class PaintApp {
         jFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                handleWindowClosing(); // Обрабатываем событие закрытия
+                handleWindowClosing(() -> jFrame.dispose()); // Закрыть окно при продолжении
             }
         });
+
     }
 
     // Метод для обработки закрытия окна с диалогом
-    private void handleWindowClosing() {
-        if (drawingPanel.getIsModified()) { // Если есть несохраненные изменения
+    void handleWindowClosing(Runnable onProceed) {
+        if (drawingPanel.getIsModified()) { // Проверка наличия несохраненных изменений
             int result = JOptionPane.showConfirmDialog(
-                    jFrame, "You have unsaved changes. Do you want to save before exiting?",
+                    jFrame, "You have unsaved changes. Do you want to save before continuing?",
                     "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
                 if (toolPanel.saveFile()) {
-                    jFrame.dispose(); // Закрываем окно
+                    onProceed.run(); // Продолжить, если сохранение прошло успешно
+                    drawingPanel.setIsModified(false);
                 }
             } else if (result == JOptionPane.NO_OPTION) {
-                jFrame.dispose(); // Закрываем без сохранения
+                onProceed.run(); // Продолжить без сохранения
+                drawingPanel.setIsModified(false);
             }
-            // Если пользователь выбрал "Cancel", то ничего не делаем, окно не закроется
+            // Если выбрано "Отмена", ничего не делать и оставаться на текущем файле
         } else {
-            jFrame.dispose(); // Закрываем, если изменений нет
+            onProceed.run(); // Без модификаций, продолжить сразу
+            drawingPanel.setIsModified(false);
         }
     }
+
 
     // Настройка панели рисования
     private void setupDrawingPanel() {
@@ -70,11 +76,13 @@ public class PaintApp {
 
     // Настройка панели инструментов
     private void setupToolPanel() {
-        toolPanel = new ToolPanel(drawingPanel); // Создаем панель инструментов и связываем её с панелью рисования
+        toolPanel = new ToolPanel(drawingPanel, this);
     }
+
 
     // Настройка компоновки панели инструментов и панели рисования в основном окне
     private void setupLayout() {
+        JScrollPane scrollPane = new JScrollPane(drawingPanel);
         mainPanel = new JPanel(new BorderLayout()); // Основная панель с компоновкой BorderLayout
         mainPanel.add(toolPanel, BorderLayout.WEST); // Добавляем панель инструментов слева
         mainPanel.add(drawingPanel, BorderLayout.CENTER); // Добавляем панель рисования в центр
