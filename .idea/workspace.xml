@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="83fd2514-18e0-4091-8b14-e929db0d01c4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/paint/colorButton.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/paint/imagePanel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/paint/mainPanel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/paint/whiteCanvas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/paint/SaveImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/paint/SaveImage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/paint/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/paint/main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/paint/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/paint/MainWindow.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +41,7 @@
     "Application.MainWindow (1).executor": "Run",
     "Application.MainWindow (2).executor": "Run",
     "Application.MainWindow (3).executor": "Run",
+    "Application.MainWindow (4).executor": "Run",
     "Application.MainWindow.executor": "Run",
     "Application.main (1).executor": "Run",
     "Application.main (2).executor": "Run",
@@ -54,9 +49,11 @@
     "Application.main (4).executor": "Run",
     "Application.main.executor": "Run",
     "Application.mix.executor": "Run",
+    "Application.whiteCanvas (1).executor": "Run",
+    "Application.whiteCanvas.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging davlet",
+    "git-widget-placeholder": "davlet",
     "jdk.selected.JAVA_MODULE": "corretto-17",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -70,21 +67,8 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.whiteCanvas">
+  <component name="RunManager" selected="Application.MainWindow">
     <configuration name="MainWindow (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.paint.MainWindow" />
-      <module name="java-paint" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.paint.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="MainWindow (4)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.paint.MainWindow" />
       <module name="java-paint" />
       <extension name="coverage">
@@ -123,6 +107,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="whiteCanvas (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.paint.whiteCanvas" />
+      <module name="java-paint" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.paint.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="whiteCanvas" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.paint.whiteCanvas" />
       <module name="java-paint" />
@@ -136,26 +133,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="java-paint" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="java-paint" />
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.MainWindow" />
+        <item itemvalue="Application.whiteCanvas (1)" />
         <item itemvalue="Application.whiteCanvas" />
         <item itemvalue="Application.MainWindow (1)" />
         <item itemvalue="Application.main" />
-        <item itemvalue="Application.MainWindow" />
-        <item itemvalue="Application.MainWindow (4)" />
       </list>
     </recent_temporary>
   </component>
@@ -181,6 +165,7 @@
       <workItem from="1730803024734" duration="55000" />
       <workItem from="1730803085057" duration="14000" />
       <workItem from="1730803867544" duration="3697000" />
+      <workItem from="1730905588084" duration="2684000" />
     </task>
     <servers />
   </component>
