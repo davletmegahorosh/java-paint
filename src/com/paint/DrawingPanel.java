@@ -1,6 +1,5 @@
 package com.paint;
 
-import com.paint.Tool;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +16,7 @@ public class DrawingPanel extends JPanel {
     private Tool currentTool = Tool.BRUSH; // Текущий инструмент (кисть или ластик)
     private int brushSize = 5; // Размер кисти
     private int eraserSize = 10; // Размер ластика
+    public boolean isModified = false;
 
     // Конструктор инициализирует размеры панели и цвет фона, а также добавляет обработчики мыши
     public DrawingPanel() {
@@ -31,6 +31,7 @@ public class DrawingPanel extends JPanel {
                     initializeCanvas();
                 }
                 useTool(e); // Используем выбранный инструмент в точке нажатия мыши
+                setModified(); // Устанавливаем флаг изменений
             }
         });
 
@@ -39,9 +40,22 @@ public class DrawingPanel extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 useTool(e); // Используем инструмент, пока тянем мышь
+                setModified(); // Устанавливаем флаг изменений
                 repaint(); // Перерисовываем панель
             }
         });
+    }
+
+    // метод проверяет было ли изменение
+    private void setModified() {
+        boolean oldModified = this.isModified;
+        this.isModified = true;
+        firePropertyChange("canvasModified", oldModified, this.isModified); // Уведомление об изменении
+    }
+
+    // getter для переменной изменения
+    public boolean getIsModified() {
+        return isModified;
     }
 
     // Метод для получения текущего изображения холста
