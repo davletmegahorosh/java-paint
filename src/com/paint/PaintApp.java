@@ -2,6 +2,8 @@ package com.paint;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -28,9 +30,37 @@ public class PaintApp {
     // Настройка основного окна (JFrame)
     private void setupMainFrame() {
         jFrame = new JFrame("Advanced Paint App"); // Создаем окно с заголовком
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Завершение программы при закрытии окна
+        jFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Завершение программы при закрытии окна
         jFrame.setSize(1000, 700); // Устанавливаем размер окна
         jFrame.setLocationRelativeTo(null); // Окно будет по центру экрана
+
+        // Добавляем обработчик закрытия окна
+        jFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                handleWindowClosing(); // Обрабатываем событие закрытия
+            }
+        });
+    }
+
+    // Метод для обработки закрытия окна с диалогом
+    private void handleWindowClosing() {
+        if (drawingPanel.getIsModified()) { // Если есть несохраненные изменения
+            int result = JOptionPane.showConfirmDialog(
+                    jFrame, "You have unsaved changes. Do you want to save before exiting?",
+                    "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (result == JOptionPane.YES_OPTION) {
+                if (toolPanel.saveFile()) {
+                    jFrame.dispose(); // Закрываем окно
+                }
+            } else if (result == JOptionPane.NO_OPTION) {
+                jFrame.dispose(); // Закрываем без сохранения
+            }
+            // Если пользователь выбрал "Cancel", то ничего не делаем, окно не закроется
+        } else {
+            jFrame.dispose(); // Закрываем, если изменений нет
+        }
     }
 
     // Настройка панели рисования
