@@ -73,15 +73,17 @@ public class ToolPanel extends JPanel {
     }
 
     // Сохраняет изображение в файл
-    private void saveFile() {
+    public boolean saveFile() {
         int returnValue = fileChooser.showSaveDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION) { // Если место для сохранения выбрано
             File fileToSave = fileChooser.getSelectedFile();
             try {
                 ImageIO.write(drawingPanel.getCanvasImage(), "jpg", fileToSave); // Сохраняем изображение в формате JPG
+                return true;
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage()); // Показываем сообщение об ошибке
             }
         }
+        return false;
     }
 }
