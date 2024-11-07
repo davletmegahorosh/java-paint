@@ -39,7 +39,7 @@ public class PaintApp {
         jFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                handleWindowClosing(() -> jFrame.dispose()); // Close window on proceed
+                handleWindowClosing(() -> jFrame.dispose()); // Закрыть окно при продолжении
             }
         });
 
@@ -47,23 +47,23 @@ public class PaintApp {
 
     // Метод для обработки закрытия окна с диалогом
     void handleWindowClosing(Runnable onProceed) {
-        if (drawingPanel.getIsModified()) { // Check for unsaved changes
+        if (drawingPanel.getIsModified()) { // Проверка наличия несохраненных изменений
             int result = JOptionPane.showConfirmDialog(
                     jFrame, "You have unsaved changes. Do you want to save before continuing?",
                     "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
                 if (toolPanel.saveFile()) {
-                    onProceed.run(); // Proceed if saving is successful
+                    onProceed.run(); // Продолжить, если сохранение прошло успешно
                     drawingPanel.setIsModified(false);
                 }
             } else if (result == JOptionPane.NO_OPTION) {
-                onProceed.run(); // Proceed without saving
+                onProceed.run(); // Продолжить без сохранения
                 drawingPanel.setIsModified(false);
             }
-            // If "Cancel" is chosen, do nothing, so we stay on the current file
+            // Если выбрано "Отмена", ничего не делать и оставаться на текущем файле
         } else {
-            onProceed.run(); // No modifications, proceed immediately
+            onProceed.run(); // Без модификаций, продолжить сразу
             drawingPanel.setIsModified(false);
         }
     }
@@ -76,7 +76,7 @@ public class PaintApp {
 
     // Настройка панели инструментов
     private void setupToolPanel() {
-        toolPanel = new ToolPanel(drawingPanel, this); // Pass the PaintApp instance
+        toolPanel = new ToolPanel(drawingPanel, this);
     }
 
 

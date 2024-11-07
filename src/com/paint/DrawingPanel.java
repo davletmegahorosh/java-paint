@@ -19,9 +19,9 @@ public class DrawingPanel extends JPanel {
     public boolean isModified = false;
     private double zoomLevel = 1.0; // Начальный уровень увеличения
     private final double zoomIncrement = 0.1; //Коэффецент повышения
-    private int panX = 0, panY = 0; // Offset values for panning
-    private int lastMouseX, lastMouseY; // To track the last mouse position during dragging
-    private boolean isPanning = false; // Track if the user is currently panning
+    private int panX = 0, panY = 0; // Значения смещения для панорамирования
+    private int lastMouseX, lastMouseY; // Чтобы отслеживать последнее положение мыши во время перетаскивания
+    private boolean isPanning = false; // Отслеживание, выполняет ли пользователь панорамирование в данный момент
 
     // Конструктор инициализирует размеры панели и цвет фона, а также добавляет обработчики мыши
     public DrawingPanel() {
@@ -32,19 +32,19 @@ public class DrawingPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) { // Right-click to start panning
+                if (SwingUtilities.isRightMouseButton(e)) { // Щелк правой кнопкой мыши, чтобы начать панорамирование
                     isPanning = true;
                     lastMouseX = e.getX();
                     lastMouseY = e.getY();
                 } else {
-                    useTool(e); // Use brush or eraser tool with left-click
+                    useTool(e); // Используйте кисть или ластик, щелкнув левой кнопкой мыши.
                     setModified();
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                isPanning = false; // Stop panning on mouse release
+                isPanning = false; // Остановка панорамирования при отпускании мыши
             }
         });
 
@@ -80,7 +80,7 @@ public class DrawingPanel extends JPanel {
         repaint();
     }
 
-    // Adjust panning offsets based on zoom level to maintain center view
+    // Регулировка смещения панорамирования в зависимости от уровня масштабирования, чтобы сохранить вид по центру.
     private void adjustPanForZoom() {
         panX = (int) ((getWidth() / 2 - (getWidth() / 2 - panX) * zoomLevel));
         panY = (int) ((getHeight() / 2 - (getHeight() / 2 - panY) * zoomLevel));
