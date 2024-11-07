@@ -17,6 +17,11 @@ public class DrawingPanel extends JPanel {
     private int brushSize = 5; // Размер кисти
     private int eraserSize = 10; // Размер ластика
     public boolean isModified = false;
+    private double zoomLevel = 1.0; // Начальный уровень увеличения
+    private final double zoomIncrement = 0.1; //Коэффецент повышения
+    private int panX = 0, panY = 0; // Offset values for panning
+    private int lastMouseX, lastMouseY; // To track the last mouse position during dragging
+    private boolean isPanning = false; // Track if the user is currently panning
 
     // Конструктор инициализирует размеры панели и цвет фона, а также добавляет обработчики мыши
     public DrawingPanel() {
@@ -27,23 +32,58 @@ public class DrawingPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (g2 == null) { // Инициализация холста, если он ещё не создан
-                    initializeCanvas();
+                if (SwingUtilities.isRightMouseButton(e)) { // Right-click to start panning
+                    isPanning = true;
+                    lastMouseX = e.getX();
+                    lastMouseY = e.getY();
+                } else {
+                    useTool(e); // Use brush or eraser tool with left-click
+                    setModified();
                 }
-                useTool(e); // Используем выбранный инструмент в точке нажатия мыши
-                setModified(); // Устанавливаем флаг изменений
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                isPanning = false; // Stop panning on mouse release
             }
         });
 
-        // Обработчик перетаскивания мыши для непрерывного рисования или стирания
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                useTool(e); // Используем инструмент, пока тянем мышь
-                setModified(); // Устанавливаем флаг изменений
-                repaint(); // Перерисовываем панель
+                if (isPanning) {
+                    int deltaX = e.getX() - lastMouseX;
+                    int deltaY = e.getY() - lastMouseY;
+                    panX += deltaX;
+                    panY += deltaY;
+                    lastMouseX = e.getX();
+                    lastMouseY = e.getY();
+                    repaint();
+                } else {
+                    useTool(e);
+                    setModified();
+                    repaint();
+                }
             }
         });
+    }
+
+    public void zoomIn (){
+        zoomLevel += zoomIncrement;
+        adjustPanForZoom();
+        repaint();
+    }
+
+    public void zoomOut (){
+        zoomLevel = Math.max(zoomLevel-zoomIncrement, zoomIncrement); // Предотвращение слишком низкого уровня масштабирования
+        adjustPanForZoom();
+        repaint();
+    }
+
+    // Adjust panning offsets based on zoom level to maintain center view
+    private void adjustPanForZoom() {
+        panX = (int) ((getWidth() / 2 - (getWidth() / 2 - panX) * zoomLevel));
+        panY = (int) ((getHeight() / 2 - (getHeight() / 2 - panY) * zoomLevel));
     }
 
     // метод проверяет было ли изменение
@@ -85,16 +125,23 @@ public class DrawingPanel extends JPanel {
         if (canvasImage == null) {
             initializeCanvas(); // Инициализируем холст, если он ещё не создан
         }
-        g.drawImage(canvasImage, 0, 0, null); // Отображаем изображение холста
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.translate(panX, panY); // Apply panning
+        g2d.scale(zoomLevel, zoomLevel); // Apply zooming
+        g2d.drawImage(canvasImage, 0, 0, null); // Draw the transformed image
+        g2d.dispose();
     }
+
 
     // Метод для использования текущего инструмента на основе события мыши
     private void useTool(MouseEvent e) {
         if (g2 == null) {
             initializeCanvas();
         }
-        int x = e.getX();
-        int y = e.getY();
+        // Adjust mouse coordinates based on zoom and pan
+        int x = (int) ((e.getX() - panX) / zoomLevel);
+        int y = (int) ((e.getY() - panY) / zoomLevel);
+
         switch (currentTool) {
             case BRUSH:
                 g2.setColor(currentColor); // Устанавливаем цвет кисти
@@ -107,6 +154,7 @@ public class DrawingPanel extends JPanel {
             default:
                 break;
         }
+        repaint();
     }
 
     // Метод для изменения текущего цвета рисования

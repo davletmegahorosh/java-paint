@@ -82,6 +82,7 @@ public class PaintApp {
 
     // Настройка компоновки панели инструментов и панели рисования в основном окне
     private void setupLayout() {
+        JScrollPane scrollPane = new JScrollPane(drawingPanel);
         mainPanel = new JPanel(new BorderLayout()); // Основная панель с компоновкой BorderLayout
         mainPanel.add(toolPanel, BorderLayout.WEST); // Добавляем панель инструментов слева
         mainPanel.add(drawingPanel, BorderLayout.CENTER); // Добавляем панель рисования в центр

@@ -21,6 +21,8 @@ public class ToolPanel extends JPanel {
         add(createFileOperationsPanel());
         add(Box.createVerticalStrut(20));
         add(createColorPickerPanel());
+        add(createZoomPanel());
+
     }
 
 
@@ -52,6 +54,19 @@ public class ToolPanel extends JPanel {
         return filePanel;
     }
 
+
+    // Панель для увеличения, уменьшения
+    private JPanel createZoomPanel(){
+        JPanel zoomPanel = new JPanel(new GridLayout(1,2,5,5)); // Панель управления масштабированием
+        JButton zoomInButton = new JButton("+");
+        zoomInButton.addActionListener(e -> drawingPanel.zoomIn()); // Увеличение
+        JButton zoomOutButton = new JButton("-");
+        zoomOutButton.addActionListener(e -> drawingPanel.zoomOut()); // Уменьшение
+
+        zoomPanel.add(zoomInButton);
+        zoomPanel.add(zoomOutButton);
+        return zoomPanel;
+    }
 
 
     // Создает панель выбора цвета
