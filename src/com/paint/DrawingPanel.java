@@ -57,6 +57,11 @@ public class DrawingPanel extends JPanel {
     public boolean getIsModified() {
         return isModified;
     }
+    // setter для переменной изменения
+    public void setIsModified(boolean value) {
+        this.isModified = value;
+
+    }
 
     // Метод для получения текущего изображения холста
     public BufferedImage getCanvasImage() {

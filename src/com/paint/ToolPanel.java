@@ -7,32 +7,42 @@ import java.awt.*;
 import java.io.File;
 
 public class ToolPanel extends JPanel {
-    private final DrawingPanel drawingPanel; // Панель рисования, с которой взаимодействуют инструменты
-    private final JFileChooser fileChooser; // Диалог выбора файла для открытия и сохранения
+    private final DrawingPanel drawingPanel;
+    private final PaintApp paintApp; // Reference to PaintApp
+    private final JFileChooser fileChooser;
 
-    // Конструктор ToolPanel, инициализирует интерфейс панели инструментов
-    public ToolPanel(DrawingPanel drawingPanel) {
+    public ToolPanel(DrawingPanel drawingPanel, PaintApp paintApp) {
         this.drawingPanel = drawingPanel;
+        this.paintApp = paintApp; // Store the reference to PaintApp
         fileChooser = new JFileChooser();
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // Устанавливаем вертикальную компоновку
-        setBorder(new EmptyBorder(10, 10, 10, 10)); // Добавляем отступы для панели
-
-        add(createFileOperationsPanel()); // Добавляем панель с файлами (создать, открыть, сохранить)
-        add(Box.createVerticalStrut(20)); // Добавляем вертикальный промежуток между элементами
-        add(createColorPickerPanel()); // Добавляем панель выбора цвета
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
+        add(createFileOperationsPanel());
+        add(Box.createVerticalStrut(20));
+        add(createColorPickerPanel());
     }
+
+
 
     // Создает панель для операций с файлами (создание, открытие, сохранение)
     private JPanel createFileOperationsPanel() {
         JPanel filePanel = new JPanel(new GridLayout(3, 1, 5, 5)); // Панель с сеткой из 3 строк и 1 столбца
 
         JButton newFileButton = new JButton("New File"); // Кнопка "Новый файл"
-        newFileButton.addActionListener(e -> drawingPanel.clearCanvas()); // Очищает холст при нажатии
+        newFileButton.addActionListener(e -> {
+            paintApp.handleWindowClosing(drawingPanel::clearCanvas); // Pass clearCanvas as the action to proceed
+        }); // Очищает холст при нажатии
+
+
         filePanel.add(newFileButton);
 
         JButton openFileButton = new JButton("Open"); // Кнопка "Открыть"
-        openFileButton.addActionListener(e -> openFile()); // Открывает файл при нажатии
+        openFileButton.addActionListener(e -> {
+            paintApp.handleWindowClosing(this::openFile); // Pass openFile as the action to proceed
+        });
+
+
         filePanel.add(openFileButton);
 
         JButton saveFileButton = new JButton("Save"); // Кнопка "Сохранить"
@@ -41,6 +51,8 @@ public class ToolPanel extends JPanel {
 
         return filePanel;
     }
+
+
 
     // Создает панель выбора цвета
     private JPanel createColorPickerPanel() {

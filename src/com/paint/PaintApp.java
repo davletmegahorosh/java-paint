@@ -27,6 +27,7 @@ public class PaintApp {
         setupLayout(); // Настройка компоновки панелей
     }
 
+
     // Настройка основного окна (JFrame)
     private void setupMainFrame() {
         jFrame = new JFrame("Advanced Paint App"); // Создаем окно с заголовком
@@ -38,30 +39,35 @@ public class PaintApp {
         jFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                handleWindowClosing(); // Обрабатываем событие закрытия
+                handleWindowClosing(() -> jFrame.dispose()); // Close window on proceed
             }
         });
+
     }
 
     // Метод для обработки закрытия окна с диалогом
-    private void handleWindowClosing() {
-        if (drawingPanel.getIsModified()) { // Если есть несохраненные изменения
+    void handleWindowClosing(Runnable onProceed) {
+        if (drawingPanel.getIsModified()) { // Check for unsaved changes
             int result = JOptionPane.showConfirmDialog(
-                    jFrame, "You have unsaved changes. Do you want to save before exiting?",
+                    jFrame, "You have unsaved changes. Do you want to save before continuing?",
                     "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
                 if (toolPanel.saveFile()) {
-                    jFrame.dispose(); // Закрываем окно
+                    onProceed.run(); // Proceed if saving is successful
+                    drawingPanel.setIsModified(false);
                 }
             } else if (result == JOptionPane.NO_OPTION) {
-                jFrame.dispose(); // Закрываем без сохранения
+                onProceed.run(); // Proceed without saving
+                drawingPanel.setIsModified(false);
             }
-            // Если пользователь выбрал "Cancel", то ничего не делаем, окно не закроется
+            // If "Cancel" is chosen, do nothing, so we stay on the current file
         } else {
-            jFrame.dispose(); // Закрываем, если изменений нет
+            onProceed.run(); // No modifications, proceed immediately
+            drawingPanel.setIsModified(false);
         }
     }
+
 
     // Настройка панели рисования
     private void setupDrawingPanel() {
@@ -70,8 +76,9 @@ public class PaintApp {
 
     // Настройка панели инструментов
     private void setupToolPanel() {
-        toolPanel = new ToolPanel(drawingPanel); // Создаем панель инструментов и связываем её с панелью рисования
+        toolPanel = new ToolPanel(drawingPanel, this); // Pass the PaintApp instance
     }
+
 
     // Настройка компоновки панели инструментов и панели рисования в основном окне
     private void setupLayout() {
