@@ -1,15 +1,10 @@
 package com.paint;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
-
-
-
 
 public class main {
     private JButton button1;
@@ -101,15 +96,13 @@ public class main {
             }
         });
 
-
         openWhiteCanvaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new whiteCanva(); // Открыть новое окно с пустым холстом
+                // Создаем новый пустой холст в текущем окне
+                createNewWhiteCanvas();
             }
         });
-
-
 
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -211,6 +204,18 @@ public class main {
         }
     }
 
+    private void createNewWhiteCanvas() {
+        // Очищаем текущий холст и создаем новый
+        bufferedImage = new BufferedImage(imageLabel.getWidth(), imageLabel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = bufferedImage.createGraphics();
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight()); // Заполняем холст белым
+        g2d.dispose();
+
+        // Устанавливаем новый холст в imageLabel
+        imageLabel.setIcon(new ImageIcon(bufferedImage));
+        imageLabel.repaint();
+    }
 
     private void updateImageDisplay() {
         imageLabel.setIcon(new ImageIcon(bufferedImage));
@@ -227,6 +232,4 @@ public class main {
     public static void main(String[] args) {
         new main();
     }
-
 }
-

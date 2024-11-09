@@ -46,7 +46,16 @@ public class whiteCanva extends JFrame {
         });
 
         newFileButton.addActionListener(e -> {
-            new whiteCanva(); // Создаем новый пустой холст
+            // Очистить текущий холст
+            drawingImage = new BufferedImage(800, 500, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = drawingImage.createGraphics();
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, drawingImage.getWidth(), drawingImage.getHeight()); // Заполняем холст белым
+            g2d.dispose();
+
+            // Обновляем изображение на экране
+            imageLabel.setIcon(new ImageIcon(drawingImage));
+            imageLabel.repaint();
         });
 
         chooseFileButton.addActionListener(e -> {
@@ -159,6 +168,7 @@ public class whiteCanva extends JFrame {
     private void loadImage(File imageFile) {
         try {
             BufferedImage image = ImageIO.read(imageFile);
+            drawingImage = new BufferedImage(800, 500, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = drawingImage.createGraphics();
             g2d.drawImage(image, 0, 0, imageLabel.getWidth(), imageLabel.getHeight(), null);
             g2d.dispose();
