@@ -1,13 +1,19 @@
 package com.paint;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+
+
+
+
 public class main {
     private JButton button1;
+    private JButton openWhiteCanvaButton;
     private JPanel panel1;
     private JLabel imageLabel;
     private JFrame jFrame;
@@ -34,9 +40,11 @@ public class main {
         panel1 = new JPanel(new BorderLayout());
 
         button1 = new JButton("Выбрать файл");
+        openWhiteCanvaButton = new JButton("Открыть новый файл");
         saveButton = new JButton("Сохранить файл");
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(button1);
+        buttonPanel.add(openWhiteCanvaButton);
         buttonPanel.add(saveButton);
 
         JPanel colorPanel = new JPanel();
@@ -92,6 +100,16 @@ public class main {
                 }
             }
         });
+
+
+        openWhiteCanvaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new whiteCanva(); // Открыть новое окно с пустым холстом
+            }
+        });
+
+
 
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -209,5 +227,6 @@ public class main {
     public static void main(String[] args) {
         new main();
     }
+
 }
 
