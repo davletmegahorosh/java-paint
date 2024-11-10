@@ -14,24 +14,26 @@ public class MainWindow {
     private JPanel panel1;
     private JButton fileButton;
     private JButton saveButton;
+    private JButton newCanvasButton; // New button for blank canvas
     private JPanel colorPanel;
     private JLabel imageLabel;
     private JSlider sizeSlider;
     private DrawManager drawManager;
-    private boolean isImageModified = false;  // Track modifications
-    private boolean newImagePending = false;  // Track if a new image is pending
+    private boolean isImageModified = false;
+    private boolean newImagePending = false;
 
     public MainWindow() {
         panel1 = new JPanel(new BorderLayout());
         fileButton = new JButton("Выбрать файл");
         saveButton = new JButton("Сохранить");
+        newCanvasButton = new JButton("Новый холст"); // Initialize new button
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(fileButton);
         buttonPanel.add(saveButton);
+        buttonPanel.add(newCanvasButton); // Add new button to panel
 
-        colorPanel = new JPanel();
-        colorPanel.setLayout(new FlowLayout());
-
+        colorPanel = new JPanel(new FlowLayout());
         Color[] colors = {Color.BLACK, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
         for (Color color : colors) {
             JButton colorButton = new JButton();
@@ -56,18 +58,17 @@ public class MainWindow {
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel1.add(imageLabel, BorderLayout.CENTER);
 
-        fileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                newImagePending = true;  // Flag to indicate new image loading
-                checkForUnsavedChanges();
-            }
+        fileButton.addActionListener(e -> {
+            newImagePending = true;
+            checkForUnsavedChanges();
         });
 
-        saveButton.addActionListener(e -> saveImage());
+        saveButton.addActionListener(e -> saveImageDialog());
+
+        newCanvasButton.addActionListener(e -> openNewCanvas()); // Action for new blank canvas
 
         jFrame = new JFrame("Megapushka");
-        jFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);  // Prevent immediate closing
+        jFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         jFrame.setSize(800, 600);
         jFrame.setLocationRelativeTo(null);
         jFrame.setContentPane(panel1);
@@ -76,7 +77,7 @@ public class MainWindow {
         jFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                newImagePending = false;  // Clear flag to differentiate from image loading
+                newImagePending = false;
                 checkForUnsavedChanges();
             }
         });
@@ -96,14 +97,50 @@ public class MainWindow {
             @Override
             public void mouseDragged(java.awt.event.MouseEvent e) {
                 drawManager.draw(e.getX(), e.getY());
-                isImageModified = true;  // Mark as modified on drawing
+                isImageModified = true;
             }
         });
     }
 
-    private void saveImage() {
-        SaveImage.save(drawManager.getBufferedImage(), jFrame);
-        isImageModified = false;  // Reset modification status after saving
+    private void openNewCanvas() {
+        int width = imageLabel.getWidth();
+        int height = imageLabel.getHeight();
+        BufferedImage blankImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = blankImage.createGraphics();
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, width, height);
+        g2d.dispose();
+
+        drawManager.setBufferedImage(blankImage);
+        imageLabel.setIcon(new ImageIcon(blankImage));
+        isImageModified = false; // Reset modification status for new canvas
+    }
+
+    private void saveImageDialog() {
+        if (drawManager.getBufferedImage() == null) {
+            JOptionPane.showMessageDialog(jFrame, "Нет изображения для сохранения.");
+            return;
+        }
+
+        String[] options = {"Сохранить как новый", "Заменить"};
+        int choice = JOptionPane.showOptionDialog(
+                jFrame,
+                "Сохранить изображение как новый файл или заменить существующий?",
+                "Сохранение изображения",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (choice == 0) {
+            SaveImage.saveAsNew(drawManager.getBufferedImage(), jFrame);
+        } else if (choice == 1) {
+            SaveImage.replace(drawManager.getBufferedImage(), jFrame);
+        }
+
+        isImageModified = false; // Reset modification status after saving
     }
 
     private void checkForUnsavedChanges() {
@@ -115,7 +152,7 @@ public class MainWindow {
                     JOptionPane.YES_NO_CANCEL_OPTION
             );
             if (option == JOptionPane.YES_OPTION) {
-                saveImage();
+                saveImageDialog();
                 if (newImagePending) {
                     openNewImage();
                 } else {
@@ -123,18 +160,17 @@ public class MainWindow {
                 }
             } else if (option == JOptionPane.NO_OPTION) {
                 if (newImagePending) {
-                    openNewImage();  // Proceed to load new image
+                    openNewImage();
                 } else {
-                    jFrame.dispose();  // Close the application
+                    jFrame.dispose();
                 }
-            } else if (option == JOptionPane.CANCEL_OPTION) {
-                // Cancel the operation, return to the drawing page
-                newImagePending = false;  // Reset flag to stay on the current drawing
+            } else {
+                newImagePending = false;
             }
         } else if (newImagePending) {
-            openNewImage();  // No changes, proceed to load new image directly
+            openNewImage();
         } else {
-            jFrame.dispose();  // No changes, close the application directly
+            jFrame.dispose();
         }
     }
 
@@ -150,12 +186,12 @@ public class MainWindow {
                 drawManager.setBufferedImage(image);
                 ImageIcon scaledImageIcon = ImageLoader.scaleImage(image, imageLabel.getWidth(), imageLabel.getHeight());
                 imageLabel.setIcon(scaledImageIcon);
-                isImageModified = false;  // Reset modification status after loading new image
+                isImageModified = false;
             } else {
                 JOptionPane.showMessageDialog(null, "Выбран файл не является изображением: " + selectedFile.getName());
             }
         }
-        newImagePending = false;  // Reset flag after loading new image
+        newImagePending = false;
     }
 
     public static void main(String[] args) {
