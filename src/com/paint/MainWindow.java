@@ -103,17 +103,46 @@ public class MainWindow {
     }
 
     private void openNewCanvas() {
-        int width = imageLabel.getWidth();
-        int height = imageLabel.getHeight();
-        BufferedImage blankImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = blankImage.createGraphics();
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect(0, 0, width, height);
-        g2d.dispose();
-
-        drawManager.setBufferedImage(blankImage);
-        imageLabel.setIcon(new ImageIcon(blankImage));
-        isImageModified = false; // Reset modification status for new canvas
+        if (isImageModified) {
+            int option = JOptionPane.showConfirmDialog(
+                    jFrame,
+                    "Сохранить изменения перед открытием нового холста?",
+                    "Подтверждение",
+                    JOptionPane.YES_NO_CANCEL_OPTION
+            );
+            if (option == JOptionPane.YES_OPTION) {
+                saveImageDialog(); // Save the image before opening the new canvas
+                if (isImageModified) { // Check if the save was successful
+                    BufferedImage blankImage = new BufferedImage(imageLabel.getWidth(), imageLabel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = blankImage.createGraphics();
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillRect(0, 0, imageLabel.getWidth(), imageLabel.getHeight());
+                    g2d.dispose();
+                    drawManager.setBufferedImage(blankImage);
+                    imageLabel.setIcon(new ImageIcon(blankImage));
+                    isImageModified = false; // Reset modification status for new canvas
+                }
+            } else if (option == JOptionPane.NO_OPTION) {
+                BufferedImage blankImage = new BufferedImage(imageLabel.getWidth(), imageLabel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = blankImage.createGraphics();
+                g2d.setColor(Color.WHITE);
+                g2d.fillRect(0, 0, imageLabel.getWidth(), imageLabel.getHeight());
+                g2d.dispose();
+                drawManager.setBufferedImage(blankImage);
+                imageLabel.setIcon(new ImageIcon(blankImage));
+                isImageModified = false; // Reset modification status for new canvas
+            }
+        } else {
+            // If no changes have been made, directly create the new canvas
+            BufferedImage blankImage = new BufferedImage(imageLabel.getWidth(), imageLabel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = blankImage.createGraphics();
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, imageLabel.getWidth(), imageLabel.getHeight());
+            g2d.dispose();
+            drawManager.setBufferedImage(blankImage);
+            imageLabel.setIcon(new ImageIcon(blankImage));
+            isImageModified = false; // Reset modification status for new canvas
+        }
     }
 
     private void saveImageDialog() {

@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83fd2514-18e0-4091-8b14-e929db0d01c4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/paint/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/paint/MainWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/paint/SaveImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/paint/SaveImage.java" afterDir="false" />
-    </list>
+    <list default="true" id="83fd2514-18e0-4091-8b14-e929db0d01c4" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
