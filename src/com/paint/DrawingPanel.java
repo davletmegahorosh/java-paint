@@ -10,146 +10,160 @@ import java.io.File;
 import java.io.IOException;
 
 public class DrawingPanel extends JPanel {
-    private BufferedImage canvasImage; // Изображение для холста, на котором будет рисование
-    private Graphics2D g2; // Объект Graphics2D для рисования на холсте
-    private Color currentColor = Color.BLACK; // Текущий цвет для рисования
-    private Tool currentTool = Tool.BRUSH; // Текущий инструмент (кисть или ластик)
+    private BufferedImage canvasImage; // Изображение для рисования
+    private Graphics2D g2; // Графический объект для рисования на canvasImage
+    private Color currentColor = Color.BLACK; // Текущий цвет кисти
+    private Tool currentTool = Tool.BRUSH; // Текущий инструмент (по умолчанию кисть)
     private int brushSize = 5; // Размер кисти
     private int eraserSize = 10; // Размер ластика
-    public boolean isModified = false;
-    private double zoomLevel = 1.0; // Начальный уровень увеличения
-    private final double zoomIncrement = 0.1; //Коэффецент повышения
-    private int panX = 0, panY = 0; // Значения смещения для панорамирования
-    private int lastMouseX, lastMouseY; // Чтобы отслеживать последнее положение мыши во время перетаскивания
-    private boolean isPanning = false; // Отслеживание, выполняет ли пользователь панорамирование в данный момент
+    public boolean isModified = false; // Флаг для отслеживания изменений на холсте
+    private double zoomLevel = 1.0; // Уровень масштабирования
+    private final double zoomIncrement = 0.1; // Шаг масштабирования
+    private int panX = 0, panY = 0; // Координаты сдвига (панорамирования)
+    private int lastMouseX, lastMouseY; // Последние координаты мыши для панорамирования
+    private boolean isPanning = false; // Флаг для отслеживания панорамирования
+    private Point lastPoint = null; // Точка для отслеживания последней позиции при рисовании
 
-    // Конструктор инициализирует размеры панели и цвет фона, а также добавляет обработчики мыши
+    // Конструктор панели для рисования
     public DrawingPanel() {
         setPreferredSize(new Dimension(800, 600)); // Устанавливаем размер панели
-        setBackground(Color.WHITE); // Устанавливаем белый цвет фона панели
+        setBackground(Color.WHITE); // Устанавливаем фон панели в белый цвет
 
-        // Обработчик нажатий мыши, для начала рисования или стирания
+        // Добавляем слушатель событий для обработки нажатий мыши
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) { // Щелк правой кнопкой мыши, чтобы начать панорамирование
-                    isPanning = true;
+                // Проверяем, используется ли правая кнопка мыши для панорамирования
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    isPanning = true; // Включаем режим панорамирования
                     lastMouseX = e.getX();
                     lastMouseY = e.getY();
                 } else {
-                    useTool(e); // Используйте кисть или ластик, щелкнув левой кнопкой мыши.
-                    setModified();
+                    lastPoint = e.getPoint();
+                    useTool(e); // Используем инструмент для рисования
+                    setModified(); // Устанавливаем флаг изменений
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                isPanning = false; // Остановка панорамирования при отпускании мыши
+                isPanning = false; // Отключаем панорамирование
+                lastPoint = null; // Сбрасываем последнюю точку
             }
         });
 
+        // Добавляем слушатель событий для обработки перетаскивания мыши
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (isPanning) {
+                    // Если включено панорамирование, сдвигаем холст
                     int deltaX = e.getX() - lastMouseX;
                     int deltaY = e.getY() - lastMouseY;
                     panX += deltaX;
                     panY += deltaY;
                     lastMouseX = e.getX();
                     lastMouseY = e.getY();
-                    repaint();
+                    repaint(); // Перерисовываем панель
                 } else {
-                    useTool(e);
-                    setModified();
+                    useTool(e); // Используем инструмент для рисования
+                    setModified(); // Устанавливаем флаг изменений
                     repaint();
                 }
             }
         });
     }
 
-    public void zoomIn (){
+    // Метод для увеличения масштаба
+    public void zoomIn() {
         zoomLevel += zoomIncrement;
         adjustPanForZoom();
         repaint();
     }
 
-    public void zoomOut (){
-        zoomLevel = Math.max(zoomLevel-zoomIncrement, zoomIncrement); // Предотвращение слишком низкого уровня масштабирования
+    // Метод для уменьшения масштаба
+    public void zoomOut() {
+        zoomLevel = Math.max(zoomLevel - zoomIncrement, zoomIncrement);
         adjustPanForZoom();
         repaint();
     }
 
-    // Регулировка смещения панорамирования в зависимости от уровня масштабирования, чтобы сохранить вид по центру.
+    // Метод для корректировки сдвига после масштабирования
     private void adjustPanForZoom() {
         panX = (int) ((getWidth() / 2 - (getWidth() / 2 - panX) * zoomLevel));
         panY = (int) ((getHeight() / 2 - (getHeight() / 2 - panY) * zoomLevel));
     }
 
-    // метод проверяет было ли изменение
+    // Устанавливает флаг "изменено" и уведомляет слушателей
     private void setModified() {
         boolean oldModified = this.isModified;
         this.isModified = true;
-        firePropertyChange("canvasModified", oldModified, this.isModified); // Уведомление об изменении
+        firePropertyChange("canvasModified", oldModified, this.isModified);
     }
 
-    // getter для переменной изменения
-    public boolean getIsModified() {
-        return isModified;
-    }
-    // setter для переменной изменения
-    public void setIsModified(boolean value) {
-        this.isModified = value;
-
-    }
-
-    // Метод для получения текущего изображения холста
-    public BufferedImage getCanvasImage() {
-        return canvasImage;
-    }
-
-    // Метод для инициализации холста
+    // Инициализирует холст, если он еще не создан
     private void initializeCanvas() {
-        if (canvasImage == null) { // Проверяем, создано ли изображение
+        if (canvasImage == null) {
             canvasImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-            g2 = canvasImage.createGraphics(); // Получаем Graphics2D объект для рисования
+            g2 = canvasImage.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            clearCanvas(); // Очищаем холст
+            clearCanvas(); // Очистка холста
         }
     }
 
-    // Метод для отображения холста на панели
+    // Возвращает текущее изображение холста
+    public BufferedImage getCanvasImage(){
+        return canvasImage;
+    }
+
+    // Получает состояние флага "изменено"
+    public boolean getIsModified() {
+        return isModified;
+    }
+
+    // Устанавливает флаг "изменено"
+    public void setIsModified(boolean modified) {
+        this.isModified = modified;
+    }
+
+    // Метод для отрисовки компонентов на панели
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (canvasImage == null) {
-            initializeCanvas(); // Инициализируем холст, если он ещё не создан
+            initializeCanvas(); // Инициализация холста, если он не создан
         }
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.translate(panX, panY); // Apply panning
-        g2d.scale(zoomLevel, zoomLevel); // Apply zooming
-        g2d.drawImage(canvasImage, 0, 0, null); // Draw the transformed image
+        g2d.translate(panX, panY); // Применение панорамирования
+        g2d.scale(zoomLevel, zoomLevel); // Применение масштабирования
+        g2d.drawImage(canvasImage, 0, 0, null); // Отрисовка холста
         g2d.dispose();
     }
 
-
-    // Метод для использования текущего инструмента на основе события мыши
+    // Метод для применения инструмента в зависимости от текущих настроек
     private void useTool(MouseEvent e) {
         if (g2 == null) {
             initializeCanvas();
         }
-        // Adjust mouse coordinates based on zoom and pan
         int x = (int) ((e.getX() - panX) / zoomLevel);
         int y = (int) ((e.getY() - panY) / zoomLevel);
 
         switch (currentTool) {
             case BRUSH:
-                g2.setColor(currentColor); // Устанавливаем цвет кисти
-                g2.fillOval(x - brushSize / 2, y - brushSize / 2, brushSize, brushSize); // Рисуем круг (кисть)
+                g2.setColor(currentColor);
+                if (lastPoint != null) {
+                    int lastX = (int) ((lastPoint.x - panX) / zoomLevel);
+                    int lastY = (int) ((lastPoint.y - panY) / zoomLevel);
+                    g2.setStroke(new BasicStroke(brushSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    g2.drawLine(lastX, lastY, x, y);
+                } else {
+                    g2.fillOval(x - brushSize / 2, y - brushSize / 2, brushSize, brushSize);
+                }
+                lastPoint = e.getPoint();
                 break;
             case ERASER:
-                g2.setColor(Color.WHITE); // Устанавливаем цвет ластика (белый)
-                g2.fillRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize); // Стираем прямоугольником
+                g2.setColor(Color.WHITE);
+                g2.fillRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
                 break;
             default:
                 break;
@@ -157,40 +171,40 @@ public class DrawingPanel extends JPanel {
         repaint();
     }
 
-    // Метод для изменения текущего цвета рисования
+    // Метод для установки текущего цвета кисти
     public void setCurrentColor(Color color) {
         this.currentColor = color;
     }
 
-    // Метод для изменения текущего инструмента
+    // Метод для установки текущего инструмента
     public void setCurrentTool(Tool tool) {
         this.currentTool = tool;
     }
 
-    // Метод для изменения размера кисти
+    // Метод для установки размера кисти
     public void setBrushSize(int size) {
         this.brushSize = size;
     }
 
-    // Метод для изменения размера ластика
+    // Метод для установки размера ластика
     public void setEraserSize(int size) {
         this.eraserSize = size;
     }
 
-    // Метод для очистки холста
+    // Очищает холст
     public void clearCanvas() {
-        g2.setPaint(Color.WHITE); // Устанавливаем цвет для очистки
-        g2.fillRect(0, 0, getWidth(), getHeight()); // Заполняем весь холст белым цветом
-        g2.setPaint(Color.BLACK); // Возвращаем цвет по умолчанию
-        repaint(); // Перерисовываем панель
+        g2.setPaint(Color.WHITE);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+        g2.setPaint(Color.BLACK);
+        repaint();
     }
 
-    // Метод для открытия изображения из файла
+    // Открывает изображение из файла и подгоняет его под размеры холста
     public void openImage(File file) {
         try {
-            BufferedImage image = ImageIO.read(file); // Читаем изображение из файла
-            canvasImage = resizeImageToFitCanvas(image); // Изменяем размер изображения, чтобы оно подошло под холст
-            g2 = canvasImage.createGraphics(); // Обновляем Graphics2D для нового изображения
+            BufferedImage image = ImageIO.read(file);
+            canvasImage = resizeImageToFitCanvas(image);
+            g2 = canvasImage.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             repaint();
         } catch (IOException ex) {
@@ -198,7 +212,7 @@ public class DrawingPanel extends JPanel {
         }
     }
 
-    // Метод для изменения размера изображения, чтобы оно подходило под размеры холста
+    // Изменяет размер изображения для подгонки под размеры холста
     private BufferedImage resizeImageToFitCanvas(BufferedImage image) {
         int canvasWidth = getWidth();
         int canvasHeight = getHeight();
@@ -207,7 +221,7 @@ public class DrawingPanel extends JPanel {
         int newHeight = (int) (image.getHeight() * scale);
         BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = resizedImage.createGraphics();
-        g2d.drawImage(image, 0, 0, newWidth, newHeight, null); // Рисуем изображение в новом размере
+        g2d.drawImage(image, 0, 0, newWidth, newHeight, null);
         g2d.dispose();
         return resizedImage;
     }

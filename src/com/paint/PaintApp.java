@@ -90,8 +90,5 @@ public class PaintApp {
         jFrame.setVisible(true); // Отображаем окно
     }
 
-    // Основной метод запуска приложения
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(PaintApp::new); // Запуск приложения в потоке GUI
-    }
+
 }
