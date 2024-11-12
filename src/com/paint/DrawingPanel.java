@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Stack;
 
 public class DrawingPanel extends JPanel {
     private BufferedImage canvasImage; // Изображение для рисования
@@ -145,6 +146,8 @@ public class DrawingPanel extends JPanel {
         if (g2 == null) {
             initializeCanvas();
         }
+
+        // Adjust coordinates according to pan and zoom
         int x = (int) ((e.getX() - panX) / zoomLevel);
         int y = (int) ((e.getY() - panY) / zoomLevel);
 
@@ -155,20 +158,52 @@ public class DrawingPanel extends JPanel {
                     int lastX = (int) ((lastPoint.x - panX) / zoomLevel);
                     int lastY = (int) ((lastPoint.y - panY) / zoomLevel);
                     g2.setStroke(new BasicStroke(brushSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                    g2.drawLine(lastX, lastY, x, y);
+                    g2.drawLine(lastX, lastY, x, y);  // Draw line from last point to current point
                 } else {
                     g2.fillOval(x - brushSize / 2, y - brushSize / 2, brushSize, brushSize);
                 }
                 lastPoint = e.getPoint();
                 break;
+
             case ERASER:
-                g2.setColor(Color.WHITE);
+                g2.setColor(Color.WHITE);  // Use white to simulate erasing
                 g2.fillRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
                 break;
+
             default:
                 break;
         }
         repaint();
+    }
+
+    // Implement Flood Fill
+    private void floodFill(int x, int y, Color fillColor) {
+        int targetColor = canvasImage.getRGB(x, y);
+        if (targetColor != fillColor.getRGB()) {
+            fillArea(x, y, targetColor, fillColor.getRGB());
+        }
+    }
+
+    private void fillArea(int x, int y, int targetColor, int fillColor) {
+        Stack<Point> stack = new Stack<>();
+        stack.push(new Point(x, y));
+
+        while (!stack.isEmpty()) {
+            Point point = stack.pop();
+            int currentX = point.x;
+            int currentY = point.y;
+
+            if (currentX < 0 || currentX >= canvasImage.getWidth() || currentY < 0 || currentY >= canvasImage.getHeight()) {
+                continue;
+            }
+            if (canvasImage.getRGB(currentX, currentY) == targetColor) {
+                canvasImage.setRGB(currentX, currentY, fillColor);
+                stack.push(new Point(currentX + 1, currentY));
+                stack.push(new Point(currentX - 1, currentY));
+                stack.push(new Point(currentX, currentY + 1));
+                stack.push(new Point(currentX, currentY - 1));
+            }
+        }
     }
 
     // Метод для установки текущего цвета кисти

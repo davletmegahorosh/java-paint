@@ -1,5 +1,5 @@
 package com.paint;
 
 public enum Tool {
-    BRUSH, ERASER, LINE, RECTANGLE, ELLIPSE, TEXT
+    BRUSH, ERASER, LINE, RECTANGLE, ELLIPSE, TEXT, FILL
 }
