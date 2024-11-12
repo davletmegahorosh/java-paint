@@ -101,16 +101,51 @@ public class ToolPanel extends JPanel {
 
     // Сохраняет изображение в файл
     public boolean saveFile() {
+        JFileChooser fileChooser = new JFileChooser();
+
+        // Установка имени файла по умолчанию
+        fileChooser.setSelectedFile(new File("MyDrawing.jpg"));
+
         int returnValue = fileChooser.showSaveDialog(this);
-        if (returnValue == JFileChooser.APPROVE_OPTION) { // Если место для сохранения выбрано
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
+
+            // Проверяем, существует ли файл с таким именем, и если да, добавляем индекс
+            fileToSave = checkFileExistsAndAddIndex(fileToSave);
+
             try {
-                ImageIO.write(drawingPanel.getCanvasImage(), "jpg", fileToSave); // Сохраняем изображение в формате JPG
+                // Сохранение изображения в файл
+                ImageIO.write(drawingPanel.getCanvasImage(), "jpg", fileToSave);
                 return true;
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage()); // Показываем сообщение об ошибке
+                JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
             }
         }
         return false;
+    }
+
+    // Метод для проверки, существует ли файл, и добавления индекса, если файл существует
+    private File checkFileExistsAndAddIndex(File file) {
+        String filePath = file.getAbsolutePath();
+        String fileName = file.getName();
+        String fileExtension = "";
+        int lastDotIndex = fileName.lastIndexOf('.');
+
+        // Извлекаем расширение файла, если оно есть
+        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
+            fileExtension = fileName.substring(lastDotIndex); // ".jpg", ".png", и т.д.
+            fileName = fileName.substring(0, lastDotIndex); // Имя файла без расширения
+        }
+
+        int index = 1;
+        File newFile = file;
+
+        // Пока файл существует, добавляем индекс к имени
+        while (newFile.exists()) {
+            newFile = new File(file.getParent(), fileName + "(" + index + ")" + fileExtension);
+            index++;
+        }
+
+        return newFile; // Возвращаем уникальный файл
     }
 }
