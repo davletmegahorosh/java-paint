@@ -158,7 +158,7 @@ public class DrawingPanel extends JPanel {
                     int lastX = (int) ((lastPoint.x - panX) / zoomLevel);
                     int lastY = (int) ((lastPoint.y - panY) / zoomLevel);
                     g2.setStroke(new BasicStroke(brushSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                    g2.drawLine(lastX, lastY, x, y);  // Draw line from last point to current point
+                    g2.drawLine(lastX, lastY, x, y);  // Рисуем линию от последней точки до текущей точки
                 } else {
                     g2.fillOval(x - brushSize / 2, y - brushSize / 2, brushSize, brushSize);
                 }
@@ -166,7 +166,7 @@ public class DrawingPanel extends JPanel {
                 break;
 
             case ERASER:
-                g2.setColor(Color.WHITE);  // Use white to simulate erasing
+                g2.setColor(Color.WHITE);  // Используем белый цвет для имитации ластика
                 g2.fillRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
                 break;
 
@@ -176,7 +176,7 @@ public class DrawingPanel extends JPanel {
         repaint();
     }
 
-    // Implement Flood Fill
+    // Реализация алгоритма заливки (Flood Fill)
     private void floodFill(int x, int y, Color fillColor) {
         int targetColor = canvasImage.getRGB(x, y);
         if (targetColor != fillColor.getRGB()) {
