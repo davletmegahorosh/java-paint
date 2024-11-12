@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83fd2514-18e0-4091-8b14-e929db0d01c4" name="Changes" comment="" />
+    <list default="true" id="83fd2514-18e0-4091-8b14-e929db0d01c4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,41 +33,51 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Frame.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainWindow (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainWindow (2).executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainWindow (3).executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainWindow (4).executor&quot;: &quot;Run&quot;,
-    &quot;Application.MainWindow.executor&quot;: &quot;Run&quot;,
-    &quot;Application.main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.main (2).executor&quot;: &quot;Run&quot;,
-    &quot;Application.main (3).executor&quot;: &quot;Run&quot;,
-    &quot;Application.main (4).executor&quot;: &quot;Run&quot;,
-    &quot;Application.main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.mix.executor&quot;: &quot;Run&quot;,
-    &quot;Application.whiteCanvas (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.whiteCanvas.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;davlet&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;corretto-17&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Frame.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.MainWindow (1).executor": "Run",
+    "Application.MainWindow (2).executor": "Run",
+    "Application.MainWindow (3).executor": "Run",
+    "Application.MainWindow (4).executor": "Run",
+    "Application.MainWindow.executor": "Run",
+    "Application.com.pain.MainWindow.executor": "Run",
+    "Application.main (1).executor": "Run",
+    "Application.main (2).executor": "Run",
+    "Application.main (3).executor": "Run",
+    "Application.main (4).executor": "Run",
+    "Application.main.executor": "Run",
+    "Application.mix.executor": "Run",
+    "Application.whiteCanvas (1).executor": "Run",
+    "Application.whiteCanvas.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "davlet",
+    "jdk.selected.JAVA_MODULE": "corretto-17",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/Davlet/IdeaProjects/java-paint/java-paint/src/com/pain",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Application.MainWindow">
-    <configuration name="MainWindow (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/com/pain" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.pain" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.com.pain.MainWindow">
+    <configuration name="MainWindow" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.paint.MainWindow" />
       <module name="java-paint" />
       <extension name="coverage">
@@ -78,12 +90,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MainWindow" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.paint.MainWindow" />
+    <configuration name="com.pain.MainWindow" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.pain.MainWindow" />
       <module name="java-paint" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.paint.*" />
+          <option name="PATTERN" value="com.pain.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -132,11 +144,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.com.pain.MainWindow" />
         <item itemvalue="Application.MainWindow" />
         <item itemvalue="Application.whiteCanva" />
         <item itemvalue="Application.whiteCanvas (1)" />
         <item itemvalue="Application.whiteCanvas" />
-        <item itemvalue="Application.MainWindow (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -165,6 +177,8 @@
       <workItem from="1730905588084" duration="6249000" />
       <workItem from="1731225852366" duration="31000" />
       <workItem from="1731225973197" duration="693000" />
+      <workItem from="1731341106114" duration="3127000" />
+      <workItem from="1731424220742" duration="6518000" />
     </task>
     <servers />
   </component>
