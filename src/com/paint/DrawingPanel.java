@@ -20,6 +20,9 @@ public class DrawingPanel extends JPanel {
     public boolean isModified = false; // Флаг для отслеживания изменений на холсте
     private double zoomLevel = 1.0; // Уровень масштабирования
     private final double zoomIncrement = 0.1; // Шаг масштабирования
+    private final double minZoomLevel = 0.5; // Минимальный уровень масштабирования
+    private final double maxZoomLevel = 2.1; // Максимальный уровень масштабирования
+
     private int panX = 0, panY = 0; // Координаты сдвига (панорамирования)
     private int lastMouseX, lastMouseY; // Последние координаты мыши для панорамирования
     private boolean isPanning = false; // Флаг для отслеживания панорамирования
@@ -76,23 +79,29 @@ public class DrawingPanel extends JPanel {
     }
 
     // Метод для увеличения масштаба
+// Метод для увеличения масштаба
     public void zoomIn() {
-        zoomLevel += zoomIncrement;
+        zoomLevel = Math.min(zoomLevel + zoomIncrement, maxZoomLevel); // Ограничиваем максимальный масштаб
         adjustPanForZoom();
         repaint();
+        System.out.println(zoomLevel);
     }
 
     // Метод для уменьшения масштаба
     public void zoomOut() {
-        zoomLevel = Math.max(zoomLevel - zoomIncrement, zoomIncrement);
+        zoomLevel = Math.max(zoomLevel - zoomIncrement, minZoomLevel); // Ограничиваем минимальный масштаб
         adjustPanForZoom();
         repaint();
     }
 
-    // Метод для корректировки сдвига после масштабирования
     private void adjustPanForZoom() {
-        panX = (int) ((getWidth() / 2 - (getWidth() / 2 - panX) * zoomLevel));
-        panY = (int) ((getHeight() / 2 - (getHeight() / 2 - panY) * zoomLevel));
+        // Пересчитываем панорамирование, чтобы картинка оставалась по центру
+        panX = (int) ((getWidth() - (getWidth() / zoomLevel)) / 2);
+        panY = (int) ((getHeight() - (getHeight() / zoomLevel)) / 2);
+
+        // Убедимся, что изображение не выходит за пределы
+        panX = Math.max(panX, 0); // Ограничиваем движение влево
+        panY = Math.max(panY, 0); // Ограничиваем движение вверх
     }
 
     // Устанавливает флаг "изменено" и уведомляет слушателей
