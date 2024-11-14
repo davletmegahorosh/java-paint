@@ -12,6 +12,8 @@ public class ToolPanel extends JPanel {
     private final JFileChooser fileChooser; // Диалог для выбора файла
     private JSlider brushSizeSlider; // Ползунок для размера кисти
     private JSlider eraserSizeSlider; // Ползунок для размера ластика
+    private JButton selectedColorButton = null;
+
 
     public ToolPanel(DrawingPanel drawingPanel, PaintApp paintApp) {
         this.drawingPanel = drawingPanel;
@@ -119,9 +121,23 @@ public class ToolPanel extends JPanel {
         for (Color color : colors) {
             JButton colorButton = new JButton();
             colorButton.setBackground(color); // Устанавливаем цвет кнопки
+            colorButton.setOpaque(true); // Делаем кнопку непрозрачной
             colorButton.setPreferredSize(new Dimension(30, 30)); // Устанавливаем размер кнопки
             colorButton.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Рамка вокруг кнопки
-            colorButton.addActionListener(e -> drawingPanel.setCurrentColor(color)); // Устанавливает текущий цвет при выборе
+
+            // Добавляем действие для выбора цвета и выделения кнопки
+            colorButton.addActionListener(e -> {
+                // Убираем рамку у предыдущей выбранной кнопки, если она есть
+                if (selectedColorButton != null) {
+                    selectedColorButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                }
+                // Устанавливаем рамку для текущей выбранной кнопки
+                colorButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
+                selectedColorButton = colorButton; // Обновляем ссылку на выбранную кнопку
+
+                drawingPanel.setCurrentColor(color); // Устанавливает текущий цвет для рисования
+            });
+
             colorPanel.add(colorButton);
         }
 
