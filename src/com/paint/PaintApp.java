@@ -72,6 +72,7 @@ public class PaintApp {
     // Настройка панели рисования
     private void setupDrawingPanel() {
         drawingPanel = new DrawingPanel(); // Создаем экземпляр панели рисования
+        drawingPanel.setBackground(new Color(240, 240, 240)); // Светло-серый фон
     }
 
     // Настройка панели инструментов
