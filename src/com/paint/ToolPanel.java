@@ -13,6 +13,8 @@ public class ToolPanel extends JPanel {
     private JSlider brushSizeSlider; // Ползунок для размера кисти
     private JSlider eraserSizeSlider; // Ползунок для размера ластика
     private JButton selectedColorButton = null;
+    private JButton selectedToolButton = null; // Переменная для отслеживания выбранного инструмента
+
 
 
     public ToolPanel(DrawingPanel drawingPanel, PaintApp paintApp) {
@@ -46,6 +48,20 @@ public class ToolPanel extends JPanel {
         toolPanel.add(fillButton);
         return toolPanel;
     }
+    // Выбирает инструмент и выделяет соответствующую кнопку
+    private void selectTool(JButton toolButton, Tool tool) {
+        // Убираем выделение с предыдущей кнопки, если есть
+        if (selectedToolButton != null) {
+            selectedToolButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        }
+
+        // Устанавливаем выделение для текущей кнопки
+        toolButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
+        selectedToolButton = toolButton; // Обновляем выбранную кнопку
+
+        drawingPanel.setCurrentTool(tool); // Устанавливаем инструмент для рисования
+    }
+
 
     // Создает ползунок для настройки размера кисти
     private JPanel createBrushSizeSlider() {
@@ -136,12 +152,23 @@ public class ToolPanel extends JPanel {
                 selectedColorButton = colorButton; // Обновляем ссылку на выбранную кнопку
 
                 drawingPanel.setCurrentColor(color); // Устанавливает текущий цвет для рисования
+                selectTool(getBrushButton(), Tool.BRUSH);
             });
 
             colorPanel.add(colorButton);
         }
 
         return colorPanel;
+    }
+
+    private JButton getBrushButton() {
+        for (Component component : createToolSelectionPanel().getComponents()) {
+            JButton button = (JButton) component;
+            if ("Brush".equals(button.getText())) {
+                return button;
+            }
+        }
+        return null;
     }
 
     // Открывает изображение из файла
