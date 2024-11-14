@@ -27,6 +27,8 @@ public class DrawingPanel extends JPanel {
     private int lastMouseX, lastMouseY; // Последние координаты мыши для панорамирования
     private boolean isPanning = false; // Флаг для отслеживания панорамирования
     private Point lastPoint = null; // Точка для отслеживания последней позиции при рисовании
+    private BufferedImage backgroundImage; // Основное изображение
+
 
     // Конструктор панели для рисования
     public DrawingPanel() {
@@ -84,7 +86,6 @@ public class DrawingPanel extends JPanel {
         zoomLevel = Math.min(zoomLevel + zoomIncrement, maxZoomLevel); // Ограничиваем максимальный масштаб
         adjustPanForZoom();
         repaint();
-        System.out.println(zoomLevel);
     }
 
     // Метод для уменьшения масштаба
@@ -175,11 +176,17 @@ public class DrawingPanel extends JPanel {
                 break;
 
             case ERASER:
-                g2.setColor(Color.WHITE);  // Используем белый цвет для имитации ластика
-                g2.fillRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
-                break;
-
-            default:
+                if (backgroundImage != null) {
+                    for (int dx = -eraserSize / 2; dx <= eraserSize / 2; dx++) {
+                        for (int dy = -eraserSize / 2; dy <= eraserSize / 2; dy++) {
+                            int px = x + dx;
+                            int py = y + dy;
+                            if (px >= 0 && py >= 0 && px < backgroundImage.getWidth() && py < backgroundImage.getHeight()) {
+                                canvasImage.setRGB(px, py, backgroundImage.getRGB(px, py));
+                            }
+                        }
+                    }
+                }
                 break;
         }
         repaint();
@@ -247,14 +254,17 @@ public class DrawingPanel extends JPanel {
     public void openImage(File file) {
         try {
             BufferedImage image = ImageIO.read(file);
-            canvasImage = resizeImageToFitCanvas(image);
+            backgroundImage = resizeImageToFitCanvas(image); // Сохраняем копию основного изображения
+            canvasImage = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
             g2 = canvasImage.createGraphics();
+            g2.drawImage(backgroundImage, 0, 0, null); // Копируем основное изображение на холст
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             repaint();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
+
 
     // Изменяет размер изображения для подгонки под размеры холста
     private BufferedImage resizeImageToFitCanvas(BufferedImage image) {
