@@ -7,3 +7,5 @@ public class Main {
         SwingUtilities.invokeLater(PaintApp::new);  // Запуск приложения
     }
 }
+
+

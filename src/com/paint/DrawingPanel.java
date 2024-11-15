@@ -22,12 +22,12 @@ public class DrawingPanel extends JPanel {
     private final double zoomIncrement = 0.1; // Шаг масштабирования
     private final double minZoomLevel = 0.5; // Минимальный уровень масштабирования
     private final double maxZoomLevel = 2.1; // Максимальный уровень масштабирования
-
     private int panX = 0, panY = 0; // Координаты сдвига (панорамирования)
     private int lastMouseX, lastMouseY; // Последние координаты мыши для панорамирования
     private boolean isPanning = false; // Флаг для отслеживания панорамирования
     private Point lastPoint = null; // Точка для отслеживания последней позиции при рисовании
     private BufferedImage backgroundImage; // Основное изображение
+    private boolean canvasOpened = true;
 
 
     // Конструктор панели для рисования
@@ -176,7 +176,12 @@ public class DrawingPanel extends JPanel {
                 break;
 
             case ERASER:
-                if (backgroundImage != null) {
+                if (canvasOpened) {
+                    // Ластик закрашивает белым цветом, если холст пустой (без загруженного изображения)
+                    g2.setColor(Color.WHITE);
+                    g2.fillRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
+                } else if (backgroundImage != null) {
+                    // Ластик восстанавливает пиксели из фонового изображения
                     for (int dx = -eraserSize / 2; dx <= eraserSize / 2; dx++) {
                         for (int dy = -eraserSize / 2; dy <= eraserSize / 2; dy++) {
                             int px = x + dx;
@@ -188,6 +193,7 @@ public class DrawingPanel extends JPanel {
                     }
                 }
                 break;
+
         }
         repaint();
     }
@@ -244,11 +250,17 @@ public class DrawingPanel extends JPanel {
 
     // Очищает холст
     public void clearCanvas() {
-        g2.setPaint(Color.WHITE);
-        g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.setPaint(Color.BLACK);
+        backgroundImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+        canvasImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+        g2 = canvasImage.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.fillRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         repaint();
+        isModified = false;
+        canvasOpened = true;
     }
+
+
 
     // Открывает изображение из файла и подгоняет его под размеры холста
     public void openImage(File file) {
@@ -260,6 +272,7 @@ public class DrawingPanel extends JPanel {
             g2.drawImage(backgroundImage, 0, 0, null); // Копируем основное изображение на холст
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             repaint();
+            canvasOpened = false;
         } catch (IOException ex) {
             ex.printStackTrace();
         }
